@@ -1,0 +1,26 @@
+body {
+	background-image: url(img/1.jpg);
+	background-size: cover;
+	font-family: bebas neue;
+}
+
+ul li {
+	list-style: none;
+}
+
+.navbar {
+	border-radius: 0px;
+}
+
+.content {
+	
+	text-align: center;
+}
+
+.tit {
+	margin: 18%;
+	color: white;
+	font-size: 5em;
+	background-color: black;
+	height: 90px;
+}
