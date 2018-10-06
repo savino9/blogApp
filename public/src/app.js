@@ -45,12 +45,15 @@ app.set('view engine', 'ejs');
 // GET------------------------
 // 1. ROOT
 app.get('/', (req, res) => {
-	res.render(`index`);
+	res.render(`index`, {
+		message: req.query.message,
+		user: req.session.user
+	});
 });
 // 2. PROFILE
 app.get('/profile', (req, res) => {
 	const user = req.session.user;
-	if (user === null) {
+	if (user === undefined) {
 		res.redirect('/?message=' + encodeURIComponent("Please log in to view your profile"));
 	} else {
 		res.render('profile', {
@@ -59,13 +62,13 @@ app.get('/profile', (req, res) => {
 	}
 })
 // 3. POSTS LIST
-app.get('/posts/:id', (req, res) => {
-	const param = req.params.id;
-	Post.findById(param)
-	.then((post)=>{
-		res.render('list', {post:post})
-	})
-})
+// app.get('/posts/:id', (req, res) => {
+// 	const param = req.params.id;
+// 	Post.findById(param)
+// 	.then((post)=>{
+// 		res.render('list', {post:post})
+// 	})
+// })
 // 4. LOGOUT
 app.get('/logout', (req, res) => {
 	req.session.destroy((error) => {
@@ -121,13 +124,6 @@ app.post('/login', (req, res) => {
 });
 
 sequelize.sync({force:true})
-.then(() => {
-	User.create({
-		name: "Bob",
-		email: "bob@gmail.com",
-		password: "supersafe_password",
-	})
-})
 .then(() => {
 	const server = app.listen(3000, () => {
 		console.log('server listening on port 3000');
