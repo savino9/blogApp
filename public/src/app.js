@@ -28,6 +28,17 @@ const Post = sequelize.define('posts', {
 	body: Sequelize.STRING,
 });
 
+const Comment = sequelize.define('comments', {
+	body: Sequelize.STRING,
+})
+
+Post.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
+User.hasMany(Post, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
+
+// post-comment rel
+Post.hasMany(Comment, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
+Comment.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
+
 // USE
 app.use(session({
 	secret: 'secret blog app lol',
@@ -41,15 +52,16 @@ app.use(express.static('./public'));
 app.set('views', './public/views/pages');
 app.set('view engine', 'ejs');
 
-// ROUTES --------------------
-// GET------------------------
-// 1. ROOT
+// ******* ROUTES **********
+// =========================
+// ROOT
 app.get('/', (req, res) => {
 	res.render(`index`, {
 		message: req.query.message,
 		user: req.session.user
 	});
 });
+
 // 2. PROFILE
 app.get('/profile', (req, res) => {
 	const user = req.session.user;
@@ -61,27 +73,40 @@ app.get('/profile', (req, res) => {
 		});
 	}
 })
-// 3. POSTS LIST
-// app.get('/posts/:id', (req, res) => {
-// 	const param = req.params.id;
-// 	Post.findById(param)
-// 	.then((post)=>{
-// 		res.render('list', {post:post})
-// 	})
-// })
-// 4. LOGOUT
-app.get('/logout', (req, res) => {
-	req.session.destroy((error) => {
-		if(error){
-			throw error;
-		}
-		res.redirect('/?message=' + encodeURIComponent("Hope to see you soon."));
+
+// 3. USER POSTS LIST
+app.get('/posts/:id', (req, res) => {
+	const param = req.params.id;
+	console.log(param);
+
+	Post.findById(param)
+	.then((post)=>{
+		res.render('singlePost', {post:post})
 	})
-});
-// ---------------------------
-// POST ++++++++++++++++++++++
+})
+
+// LIST
+app.get('/list', (req, res) => {
+	Post.findAll().then( post => {
+		res.render('list', {post:post});
+	})
+})
+
+app.get('/plist', (req, res) => {
+	console.log(req.session.user);
+
+	Post.findAll({
+		where: {
+			userId: req.session.user.id 
+		}
+	})
+	.then( userPost => {
+		res.render('plist', {userPost:userPost});
+	})
+})
+
+// SIGN UP
 app.post('/signup', (req, res) => {
-	console.log(req.body);
   User.create({
     username: req.body.username,
     email: req.body.email,
@@ -92,6 +117,18 @@ app.post('/signup', (req, res) => {
   	res.redirect('/profile');
   })
 })
+
+// USER POST
+app.post('/posts', (req,res) => {
+	Post.create({
+		title: req.body.title,
+		body: req.body.body,
+		userId: req.session.user.id,
+	}).then(() => {
+		res.redirect('/list');
+	})
+})
+
 // LOGIN 
 app.post('/login', (req, res) => {
 	if (req.body.email.length === 0) {
@@ -123,7 +160,28 @@ app.post('/login', (req, res) => {
 	});
 });
 
-sequelize.sync({force:true})
+// LOGOUT
+app.get('/logout', (req, res) => {
+	req.session.destroy((error) => {
+		if(error){
+			throw error;
+		}
+		res.redirect('/?message=' + encodeURIComponent("Hope to see you soon."));
+	})
+});
+
+// DELETE POST
+app.delete('/postDel/:id', (req,res) => {
+	let del_id = req.params.id;
+	Post.destroy({
+		where: {
+			id: del_id
+		}
+	});
+	res.send('deleted');
+});
+
+sequelize.sync()
 .then(() => {
 	const server = app.listen(3000, () => {
 		console.log('server listening on port 3000');

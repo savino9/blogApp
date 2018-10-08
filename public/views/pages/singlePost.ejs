@@ -16,16 +16,15 @@
     </div>
 
     <div>
-      <% for(var i=0; i<post.length; i++) {%>
+
       <ul class="jumbotron">
-        <li>Title: <%= post[i].title %></li>
-        <li>Message: <%= post[i].body %></li>
-        <li>POST ID: <%= post[i].id %></li>
+        <li>Title: <%= post.title %></li>
+        <li>Message: <%= post.body %></li>
         <a class="del" id="<%= post[i].id %>" href="#">
           <span style="float: right;" class="glyphicon glyphicon-remove"></span>
         </a>
       </ul>
-      <% } %>
+
     </div>
 
   </div>
@@ -42,12 +41,12 @@ $(document).ready(function() {
 
     let id = $(this).attr('id');
     console.log(id);
-    
+
     $.ajax({
       type: 'delete',
-      contentType: "application/json; charset=utf-8", 
-      dataType: "html", 
-      url: `/postDel/${id}`,            
+      contentType: "application/json; charset=utf-8",
+      dataType: "html",
+      url: `/postDel/${id}`,
       success: (data) => {
           console.log('success');
       }

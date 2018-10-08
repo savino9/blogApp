@@ -6,8 +6,38 @@
       <a class="navbar-brand" href="#">Blog Application</a>
     </div>
     <ul class="nav navbar-nav">
-      <li class="active"><a href="/">Home</a></li>
+      <li><a href="/profile">Profile</a></li>
+      <li><a href="/list">Users Posts List</a></li>
+      <li><a href="/plist">My List</a></li>
+      <li><a href="#" data-toggle="modal" data-target="#createPost">create post</a></li>
       <li><a href="/logout"><span class="glyphicon glyphicon-log-in"></span> Logout</a></li>
     </ul>
   </div>
 </nav>
+
+<!-- Modal -->
+<div class="modal fade" id="createPost" role="dialog">
+  <div class="modal-dialog">
+  
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h1 class="modal-title">Create Post</h1>
+      </div>
+    
+      <form action="/posts" method="post" accept-charset="utf-8"> 
+        <div class="modal-body">
+          <h3>Title:</h3>
+          <input type="text" name="title" placeholder="title" required>
+          <h3>Body:</h3>
+          <textarea name="body" placeholder="content"></textarea>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-default btn-success">create</button>
+        </div>
+      </form>
+    </div>
+    
+  </div>
+</div>
