@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const session = require('express-session');
+const bcrypt = require('bcrypt');
 
 require('dotenv').config();
 
@@ -119,6 +120,33 @@ app.post('/signup', (req, res) => {
   	req.session.user = user;
   	res.redirect('/profile');
   })
+
+  User.beforeCreate(function(user, options) {
+    return cryptPassword(user.password)
+      .then(success => {
+        user.password = success;
+        console.log('password encrypted')
+      })
+      .catch(err => {
+        if (err) console.log(err);
+      });
+  });
+
+	function cryptPassword(password) {
+	  console.log("cryptPassword" + password);
+	  return new Promise((resolve, reject) => {
+	    bcrypt.genSalt(10, (err, salt) => {
+	      // Encrypt password using bycrpt module
+	      if (err) return reject(err);
+
+	      bcrypt.hash(password, salt,(err, hash) => {
+	        if (err) return reject(err);
+	        return resolve(hash);
+	      });
+	    });
+	  });
+	}
+
 })
 
 // USER POST
@@ -169,12 +197,27 @@ app.post('/login', (req, res) => {
 		}
 	})
 	.then((user) => {
-		if(user !== null && password === user.password) {
-			req.session.user = user;
+
+	if(user !== null ) {
+		let hash = user.password;
+		
+		bcrypt.compare(password, hash,(err, result) => {
+	    console.log('success');
+	    req.session.user = user;
 			res.redirect('/profile');
-		} else {
-			res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
-		}
+		});
+
+	} else {
+		res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+	}
+
+		// if(user !== null && password === user.password) {
+		// 	req.session.user = user;
+		// 	res.redirect('/profile');
+		// } else {
+		// 	res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+		// }
+		
 	})
 	.catch((error) => {
 		console.error(error);
