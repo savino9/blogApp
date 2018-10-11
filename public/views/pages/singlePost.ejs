@@ -14,13 +14,10 @@
     <div class="jumbotron">
       <h1>Specific Post</h1>
     </div>
-
     <div>
-
       <ul class="jumbotron">
         <li>Title: <%= post[0].title %></li>
         <li>Message: <%= post[0].body %></li>
-        
         <%if (post[0].comments.length > 0) { %>
           <% for(let i=0; i<post[0].comments.length; i++) {%>
             <ul class="jumbotron">
@@ -30,11 +27,8 @@
         <% } else { %>
           <div class="jumbotron">Sorry there's no comment yet. Just create one!</div>
         <% } %>
-
       </ul>
-
     </div>
-
   </div>
 </main>
 

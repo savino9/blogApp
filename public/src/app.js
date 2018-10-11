@@ -81,44 +81,6 @@ app.get('/list', (req, res) => {
 	})
 })
 
-// USERS COMMENTS
-app.get('/comments', (req, res) => { 
-
-	console.log(id);
-
-	// Post.findAll({
-	// 	include: [{
-	// 		model: Comment
-	// 	}]
-	// })
-	// .then( posts => {		
-	// 	let comments;	
-
-
-	// 	if (posts.length > 0) {
-	// 		for(let i =0;i<posts.length;i++){
-	// 			let postID = posts[i].dataValues.id;
-	// 			comments = posts[i].dataValues.comments;
-				
-	// 			console.log(comments);
-
-				// if (comments !== null || comments !== undefined) {
-				// 	let pCommentId = posts[i].dataValues.comments[i].postId;
-				// 	let pCommentBody = posts[i].dataValues.comments[i].body;
-
-				// 	console.log(`post id: ${posts[i].dataValues.id}`);
-				// 	console.log(`comment id: ${posts[i].dataValues.comments[i].postId}`);
-				// 	console.log(`body of comment: ${posts[i].dataValues.comments[i].body}`);
-				// }
-				
-		// 	}
-		
-		// }
-
-		res.render('comments', {comments:comments});	
-	// })
-})
-
 // PERSONAL LIST 
 app.get('/plist', (req, res) => {
 	Post.findAll({
