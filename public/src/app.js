@@ -36,8 +36,8 @@ Post.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
 User.hasMany(Post, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
 
 // post-comment rel
+Comment.belongsTo(Post, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
 Post.hasMany(Comment, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
-Comment.belongsTo(User, { foreignKey: { allowNull: false }, onDelete: 'CASCADE' })
 
 // USE
 app.use(session({
@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 	});
 });
 
-// 2. PROFILE
+// PROFILE
 app.get('/profile', (req, res) => {
 	const user = req.session.user;
 	if (user === undefined) {
@@ -74,27 +74,53 @@ app.get('/profile', (req, res) => {
 	}
 })
 
-// 3. USER POSTS LIST
-app.get('/posts/:id', (req, res) => {
-	const param = req.params.id;
-	console.log(param);
-
-	Post.findById(param)
-	.then((post)=>{
-		res.render('singlePost', {post:post})
-	})
-})
-
-// LIST
-app.get('/list', (req, res) => {
+// USERS LIST
+app.get('/list', (req, res) => { 
 	Post.findAll().then( post => {
-		res.render('list', {post:post});
+		res.render('list', {post:post});	
 	})
 })
 
-app.get('/plist', (req, res) => {
-	console.log(req.session.user);
+// USERS COMMENTS
+app.get('/comments', (req, res) => { 
 
+	console.log(id);
+
+	// Post.findAll({
+	// 	include: [{
+	// 		model: Comment
+	// 	}]
+	// })
+	// .then( posts => {		
+	// 	let comments;	
+
+
+	// 	if (posts.length > 0) {
+	// 		for(let i =0;i<posts.length;i++){
+	// 			let postID = posts[i].dataValues.id;
+	// 			comments = posts[i].dataValues.comments;
+				
+	// 			console.log(comments);
+
+				// if (comments !== null || comments !== undefined) {
+				// 	let pCommentId = posts[i].dataValues.comments[i].postId;
+				// 	let pCommentBody = posts[i].dataValues.comments[i].body;
+
+				// 	console.log(`post id: ${posts[i].dataValues.id}`);
+				// 	console.log(`comment id: ${posts[i].dataValues.comments[i].postId}`);
+				// 	console.log(`body of comment: ${posts[i].dataValues.comments[i].body}`);
+				// }
+				
+		// 	}
+		
+		// }
+
+		res.render('comments', {comments:comments});	
+	// })
+})
+
+// PERSONAL LIST 
+app.get('/plist', (req, res) => {
 	Post.findAll({
 		where: {
 			userId: req.session.user.id 
@@ -102,6 +128,21 @@ app.get('/plist', (req, res) => {
 	})
 	.then( userPost => {
 		res.render('plist', {userPost:userPost});
+	})
+})
+
+// USER POSTS LIST
+app.get('/list/:id', (req, res) => {
+	const param = req.params.id;
+	Post.findAll({
+		include: [{model: Comment}],
+		where: {
+			id: param
+		}
+	})
+	.then( post => {
+		console.log(post);
+		res.render('singlePost', {post:post})
 	})
 })
 
@@ -125,6 +166,24 @@ app.post('/posts', (req,res) => {
 		body: req.body.body,
 		userId: req.session.user.id,
 	}).then(() => {
+		res.redirect('/list');
+	})
+})
+
+// COMMENTS
+app.post('/comment', (req,res) => {
+	Post.findOne({
+		where: {
+			userId: req.session.user.id 
+		}
+	})
+	.then( post => {
+		Comment.create({
+			body: req.body.body,
+			postId: post.id,
+		})
+	})
+	.then(() => {
 		res.redirect('/list');
 	})
 })
@@ -161,7 +220,7 @@ app.post('/login', (req, res) => {
 });
 
 // LOGOUT
-app.get('/logout', (req, res) => {
+app.get('/logout', (req,res) => {
 	req.session.destroy((error) => {
 		if(error){
 			throw error;
@@ -185,5 +244,5 @@ sequelize.sync()
 .then(() => {
 	const server = app.listen(3000, () => {
 		console.log('server listening on port 3000');
-	});	
+	});
 });

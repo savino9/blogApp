@@ -1,0 +1,38 @@
+<html lang="en">
+<head>
+    <% include ../partials/head %>
+</head>
+
+<body>
+
+<header>
+    <% include ../partials/profile-header %>
+</header>
+
+<main class="container">
+  <div>
+    <div class="jumbotron">
+      <h1>Comments:</h1>
+    </div>
+
+    <div>
+      <%if (comments.length > 0) { %>
+        <% for(let i=0; i<comments.length; i++) {%>
+          <ul class="jumbotron">
+            <li>Comment: <%= comments[i].dataValues.body %></li>
+          </ul>
+        <% } %>
+      <% } else { %>
+        <div class="jumbotron">Sorry there's no post yet. Just create one!</div>
+      <% } %>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+    <% include ../partials/footer %>
+</footer>
+
+</body>
+</html>

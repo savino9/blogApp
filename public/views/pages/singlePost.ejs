@@ -12,17 +12,25 @@
 <main class="container">
   <div>
     <div class="jumbotron">
-      <h1>Users Post List</h1>
+      <h1>Specific Post</h1>
     </div>
 
     <div>
 
       <ul class="jumbotron">
-        <li>Title: <%= post.title %></li>
-        <li>Message: <%= post.body %></li>
-        <a class="del" id="<%= post[i].id %>" href="#">
-          <span style="float: right;" class="glyphicon glyphicon-remove"></span>
-        </a>
+        <li>Title: <%= post[0].title %></li>
+        <li>Message: <%= post[0].body %></li>
+        
+        <%if (post[0].comments.length > 0) { %>
+          <% for(let i=0; i<post[0].comments.length; i++) {%>
+            <ul class="jumbotron">
+              <li>Comment: <%= post[0].comments[i].dataValues.body %></li>
+            </ul>
+          <% } %>
+        <% } else { %>
+          <div class="jumbotron">Sorry there's no comment yet. Just create one!</div>
+        <% } %>
+
       </ul>
 
     </div>
@@ -33,28 +41,6 @@
 <footer>
     <% include ../partials/footer %>
 </footer>
-
-<script>
-$(document).ready(function() {
-  $(".del").click(function (e) {
-    e.preventDefault();
-
-    let id = $(this).attr('id');
-    console.log(id);
-
-    $.ajax({
-      type: 'delete',
-      contentType: "application/json; charset=utf-8",
-      dataType: "html",
-      url: `/postDel/${id}`,
-      success: (data) => {
-          console.log('success');
-      }
-    });
-    $(this).parent().fadeToggle("slow");
-  });
-});
-</script>
 
 </body>
 </html>
