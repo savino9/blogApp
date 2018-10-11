@@ -197,27 +197,16 @@ app.post('/login', (req, res) => {
 		}
 	})
 	.then((user) => {
-
-	if(user !== null ) {
-		let hash = user.password;
-		
-		bcrypt.compare(password, hash,(err, result) => {
-	    console.log('success');
-	    req.session.user = user;
-			res.redirect('/profile');
-		});
-
-	} else {
-		res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
-	}
-
-		// if(user !== null && password === user.password) {
-		// 	req.session.user = user;
-		// 	res.redirect('/profile');
-		// } else {
-		// 	res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
-		// }
-		
+		if(user !== null ) {
+			let hash = user.password;
+			bcrypt.compare(password, hash,(err, result) => {
+		    console.log('success');
+		    req.session.user = user;
+				res.redirect('/profile');
+			});
+		} else {
+			res.redirect('/?message=' + encodeURIComponent("Invalid email or password."));
+		}	
 	})
 	.catch((error) => {
 		console.error(error);
