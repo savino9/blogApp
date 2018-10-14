@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const validate = require('validate.js');
 
 require('dotenv').config();
 
@@ -63,6 +64,18 @@ app.get('/', (req, res) => {
 	});
 });
 
+app.get('/users', (req, res) => {
+	let allUsers = {};
+	User.findAll()
+	.then( users => {
+		for (var i = 0; i < users.length; i++) {
+			// allUsers.push(users[i].username);	
+			allUsers[i] = users[i].username;
+		}
+		res.send({allUsers:allUsers});
+	})
+})
+
 // PROFILE
 app.get('/profile', (req, res) => {
 	const user = req.session.user;
@@ -104,7 +117,6 @@ app.get('/list/:id', (req, res) => {
 		}
 	})
 	.then( post => {
-		console.log(post);
 		res.render('singlePost', {post:post})
 	})
 })
@@ -121,11 +133,10 @@ app.post('/signup', (req, res) => {
   	res.redirect('/profile');
   })
 
-  User.beforeCreate(function(user, options) {
+  User.beforeCreate((user, options) => {
     return cryptPassword(user.password)
       .then(success => {
         user.password = success;
-        console.log('password encrypted')
       })
       .catch(err => {
         if (err) console.log(err);
@@ -133,7 +144,6 @@ app.post('/signup', (req, res) => {
   });
 
 	function cryptPassword(password) {
-	  console.log("cryptPassword" + password);
 	  return new Promise((resolve, reject) => {
 	    bcrypt.genSalt(10, (err, salt) => {
 	      // Encrypt password using bycrpt module
@@ -146,7 +156,6 @@ app.post('/signup', (req, res) => {
 	    });
 	  });
 	}
-
 })
 
 // USER POST
@@ -200,7 +209,6 @@ app.post('/login', (req, res) => {
 		if(user !== null ) {
 			let hash = user.password;
 			bcrypt.compare(password, hash,(err, result) => {
-		    console.log('success');
 		    req.session.user = user;
 				res.redirect('/profile');
 			});
