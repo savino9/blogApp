@@ -117,7 +117,6 @@ app.get('/list/:id', (req, res) => {
 		}
 	})
 	.then( post => {
-		console.log(post);
 		res.render('singlePost', {post:post})
 	})
 })
@@ -138,7 +137,6 @@ app.post('/signup', (req, res) => {
     return cryptPassword(user.password)
       .then(success => {
         user.password = success;
-        console.log('password encrypted');
       })
       .catch(err => {
         if (err) console.log(err);
@@ -146,7 +144,6 @@ app.post('/signup', (req, res) => {
   });
 
 	function cryptPassword(password) {
-	  console.log("cryptPassword" + password);
 	  return new Promise((resolve, reject) => {
 	    bcrypt.genSalt(10, (err, salt) => {
 	      // Encrypt password using bycrpt module
@@ -212,7 +209,6 @@ app.post('/login', (req, res) => {
 		if(user !== null ) {
 			let hash = user.password;
 			bcrypt.compare(password, hash,(err, result) => {
-		    console.log('success');
 		    req.session.user = user;
 				res.redirect('/profile');
 			});
