@@ -1,7 +1,8 @@
 body {
 	background-image: url(img/1.jpg);
 	background-size: cover;
-	font-family: bebas neue;
+	/*font-family: bebas neue;*/
+	font-family: 'Oswald', sans-serif;
 }
 
 ul li {
@@ -20,7 +21,14 @@ ul li {
 .tit {
 	margin: 18%;
 	color: white;
-	font-size: 5em;
+	font-size: 4.4em;
 	background-color: black;
 	height: 90px;
 }
+
+/*validate.js*/
+ 
+.help-block.error {
+  margin-bottom: 5px;
+}
+  

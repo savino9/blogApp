@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const ejs = require('ejs');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const validate = require('validate.js');
 
 require('dotenv').config();
 
@@ -63,6 +64,18 @@ app.get('/', (req, res) => {
 	});
 });
 
+app.get('/users', (req, res) => {
+	let allUsers = {};
+	User.findAll()
+	.then( users => {
+		for (var i = 0; i < users.length; i++) {
+			// allUsers.push(users[i].username);	
+			allUsers[i] = users[i].username;
+		}
+		res.send({allUsers:allUsers});
+	})
+})
+
 // PROFILE
 app.get('/profile', (req, res) => {
 	const user = req.session.user;
@@ -121,11 +134,11 @@ app.post('/signup', (req, res) => {
   	res.redirect('/profile');
   })
 
-  User.beforeCreate(function(user, options) {
+  User.beforeCreate((user, options) => {
     return cryptPassword(user.password)
       .then(success => {
         user.password = success;
-        console.log('password encrypted')
+        console.log('password encrypted');
       })
       .catch(err => {
         if (err) console.log(err);
@@ -146,7 +159,6 @@ app.post('/signup', (req, res) => {
 	    });
 	  });
 	}
-
 })
 
 // USER POST
